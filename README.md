@@ -15,11 +15,15 @@ type Migration struct {
 
 var migrations []Migration
 var err error
+// first argument should be the path to directory with the migrations files,
+// second argument should be the direction of the migraiton
 migrations, err = Migrations("example-migrations", "down")
 if err != nil {
   return nil, fmt.Errorf("unable to fetch migrations: %w", err)
 }
 
+// executing migrations is outside the scope of this package,
+// but may be implemented as such
 for _, migration := range migrations {
   slog.Info("running a migration", "direction", migration.Direction, "filename", migration.Filename)
   err := db.Execute(migration.Content, nil)
