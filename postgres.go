@@ -35,6 +35,7 @@ type PostgresOpts struct {
 	Password string
 	Name     string
 	Sslmode  string
+	Port     string
 }
 
 // ConnStr formats a connection string in either the key-value or URI format
@@ -74,6 +75,7 @@ func (db *Postgres) ConnStr(uriFormat bool) (string, error) {
 	return connStr, nil
 }
 
+// Pool returns a connection pool for the database
 func (db *Postgres) Pool(ctx context.Context) (*pgxpool.Pool, error) {
 	connStr, err := db.ConnStr(true)
 	if err != nil {
@@ -90,7 +92,7 @@ func (db *Postgres) Pool(ctx context.Context) (*pgxpool.Pool, error) {
 	return pool, nil
 }
 
-// Open
+// Opens a connection to the database
 func (db *Postgres) Open() error {
 	connStr, err := db.ConnStr(true)
 	if err != nil {
@@ -104,6 +106,7 @@ func (db *Postgres) Open() error {
 	return nil
 }
 
+// Ping checks the connection to the database
 func (db *Postgres) Ping(ctx context.Context) error {
 	err := db.Conn.Ping()
 	if err != nil {
@@ -112,10 +115,13 @@ func (db *Postgres) Ping(ctx context.Context) error {
 	// slog.Debug("ping successful")
 	return nil
 }
+
+// Execute is not yet implemented. Use Query instead.
 func (db *Postgres) Execute(ctx context.Context, query string, vars ...any) (int64, int64, error) {
 	return 0, 0, fmt.Errorf("not implemented, use Query instead")
 }
 
+// Query runs a query on the database
 func (db *Postgres) Query(ctx context.Context, query string, vars ...any) ([]map[string]any, error) {
 	// TODO test vars, probably wrong
 	rows, err := db.Conn.QueryContext(ctx, query, vars...)
@@ -154,6 +160,7 @@ func (db *Postgres) Query(ctx context.Context, query string, vars ...any) ([]map
 	return results, nil
 }
 
+// Close closes the connection to the database
 func (db *Postgres) Close() error {
 	err := db.Conn.Close()
 	if err != nil {
@@ -162,6 +169,8 @@ func (db *Postgres) Close() error {
 	return nil
 }
 
+// NewDB creates a new database connection from provided options.
+// Returns (Postgres, error)
 func NewDB(ctx context.Context, opts PostgresOpts) (Postgres, error) {
 	db := Postgres{
 		Host:     opts.Host,
@@ -169,6 +178,7 @@ func NewDB(ctx context.Context, opts PostgresOpts) (Postgres, error) {
 		Password: opts.Password,
 		Name:     opts.Name,
 		Sslmode:  opts.Sslmode,
+		Port:     opts.Port,
 	}
 	err := db.Open()
 	if err != nil {
@@ -177,6 +187,12 @@ func NewDB(ctx context.Context, opts PostgresOpts) (Postgres, error) {
 	return db, nil
 }
 
+// NewTestDB creates a new database connection for testing using testcontainers.
+// Returns (Postgres, teardown(), error).
+//
+// After checking error, caller should remember to ensure the container is terminated by calling:
+//
+//	defer teardown()
 func NewTestDB(ctx context.Context, opts PostgresOpts) (Postgres, func(), error) {
 	var db = Postgres{
 		Host:     opts.Host,
@@ -184,6 +200,7 @@ func NewTestDB(ctx context.Context, opts PostgresOpts) (Postgres, func(), error)
 		Password: opts.Password,
 		Name:     opts.Name,
 		Sslmode:  opts.Sslmode,
+		Port:     opts.Port,
 	}
 	postgresContainer, err := postgres.Run(ctx,
 		"docker.io/postgres:16-alpine",
