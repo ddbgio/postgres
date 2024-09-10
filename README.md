@@ -1,8 +1,19 @@
 # postgres
 go wrappers, migrations, and testcontainers for postgres
 
+## 🏗️ testcontainers
+[Testcontainers](https://testcontainers.com/guides/getting-started-with-testcontainers-for-go/) provides a container setup process from within the go application.
+
+Because Linux requires root (or special permissions) for the Docker socket, it may be necessary to run sudo to run tests. Because `sudo` may not have go install added to `PATH`, use `$(which go)` to pass the full path of the go command. This is not necessary for CI tests, which have preconfigured permissions to the Docker socket.
+```shell
+sudo $(which go) test -v
+```
+
 ## migrations
-Files for initailizing (and tearing down) a database are included in the `Migrations()` function. Migrations files should be numbered in the order they are to be run, first `down`, then `up`. As such, all `down` migrations should be odd; all `up` migrations should be even. Migrations will return a list of `Migration` objects, containing _Direction_, _Filename_, and _Content_.
+Files for initailizing (and tearing down) a database are included in the `Migrations()` function.
+
+> [!TIP]
+> Migrations files should be numbered in the order they are to be run, first `down`, then `up`. As such, all `down` migrations should be odd; all `up` migrations should be even. Migrations will return a list of `Migration` objects, containing _Direction_, _Filename_, and _Content_.
 
 ```go
 // Migrations represents a single SQL migration file,
@@ -34,12 +45,4 @@ for _, migration := range migrations {
         return nil, fmt.Errorf("unable to execute migration: %w", err)
     }
 }
-```
-
-## 🏗️ testcontainers
-[Testcontainers](https://testcontainers.com/guides/getting-started-with-testcontainers-for-go/) provides a container setup process from within the go application.
-
-Because Linux requires root (or special permissions), it may be necessary to run sudo to run tests. Because `sudo` may not have go install added to `PATH`, use `$(which go)` to pass the full path of the go command.
-```shell
-sudo $(which go) test -v
 ```
