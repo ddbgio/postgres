@@ -9,7 +9,7 @@ Because Linux requires root (or special permissions) for the Docker socket, it m
 sudo $(which go) test -v
 ```
 
-## migrations
+## ⚙️ migrations
 Files for initailizing (and tearing down) a database are included in the `Migrations()` function.
 
 > [!TIP]
