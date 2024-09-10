@@ -2,7 +2,7 @@
 go wrappers and testcontainers for postgres
 
 ## migrations
-Files for initailizing (and tearing down) a database are included in the `Migrations()` function. Migrations files should be numbered in the order they are to be run, first `down`, then `up`. As such, all `down` migrations should be odd; all `up` migrations should be even. Migrations will return a list of `Migration` objects, containing _Direction_, 
+Files for initailizing (and tearing down) a database are included in the `Migrations()` function. Migrations files should be numbered in the order they are to be run, first `down`, then `up`. As such, all `down` migrations should be odd; all `up` migrations should be even. Migrations will return a list of `Migration` objects, containing _Direction_, _Filename_, and _Content_.
 
 ```go
 // Migrations represents a single SQL migration file,
