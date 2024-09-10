@@ -8,9 +8,9 @@ Files for initailizing (and tearing down) a database are included in the `Migrat
 // Migrations represents a single SQL migration file,
 // including the direction, file name, and content
 type Migration struct {
-	Direction string
-	Filename  string
-	Content   string
+    Direction string
+    Filename  string
+    Content   string
 }
 
 var migrations []Migration
@@ -19,17 +19,20 @@ var err error
 // second argument should be the direction of the migraiton
 migrations, err = Migrations("example-migrations", "down")
 if err != nil {
-  return nil, fmt.Errorf("unable to fetch migrations: %w", err)
+    return nil, fmt.Errorf("unable to fetch migrations: %w", err)
 }
 
 // executing migrations is outside the scope of this package,
 // but may be implemented as such
 for _, migration := range migrations {
-  slog.Info("running a migration", "direction", migration.Direction, "filename", migration.Filename)
-  err := db.Execute(migration.Content, nil)
-  if err != nil {
-    return nil, fmt.Errorf("unable to execute migration: %w", err) 
-  }
+    slog.Info("running a migration",
+        "direction", migration.Direction,
+        "filename", migration.Filename,
+    )
+    err := db.Execute(migration.Content, nil)
+    if err != nil {
+        return nil, fmt.Errorf("unable to execute migration: %w", err)
+    }
 }
 ```
 
