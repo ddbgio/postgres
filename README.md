@@ -1,5 +1,8 @@
 # postgres
+
 go wrappers, migrations, and testcontainers for postgres
+
+![workflow](https://github.com/ddbgio/postgres/actions/workflows/go.yml/badge.svg)
 
 ## 🏗️ testcontainers
 [Testcontainers](https://testcontainers.com/guides/getting-started-with-testcontainers-for-go/) provides a container setup process from within the go application.
