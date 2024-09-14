@@ -1,4 +1,4 @@
-module github.com/ddbgio/postgres
+module github.com/grackleclub/postgres
 
 go 1.23.0
 
